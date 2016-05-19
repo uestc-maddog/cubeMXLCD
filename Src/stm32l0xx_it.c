@@ -37,6 +37,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "LCD_test.h"
+#include "stm32l0xx_hal_def.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -104,7 +105,12 @@ void SysTick_Handler(void)
 void DMA1_Channel2_3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
-
+	// Check whether the interrupt is a transmit finish interrupt
+	if(__HAL_DMA_GET_FLAG(&hdma_spi1_tx, __HAL_DMA_GET_TC_FLAG_INDEX(&hdma_spi1_tx)) != RESET)
+	{
+		HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
+	}
+		 
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_spi1_tx);
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */

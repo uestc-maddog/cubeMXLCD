@@ -68,8 +68,8 @@ static void MX_LPTIM1_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-uint8_t test,test1;
-uint16_t testBuf1[360];
+uint8_t test,test1,test2;
+uint16_t testBuf1[1280];
 
 void DMA_user_callback(DMA_HandleTypeDef * hdma);
 
@@ -150,24 +150,12 @@ int main(void)
 	SPILCD_CS_RESET;  //LCD_CS=0
 	SPILCD_RS_SET;	
 	
-		for(test = 0; test < 100; test++)
-			LCD_Clear(10*test);
+		for(test = 0; test < 50; test++)
+			LCD_Clear(1000 + 100*test);
 		
-SPILCD_CS_SET;  //LCD_CS=1	
-/*
-	LCD_SetCursor(0x00,0x0000);	//设置光标位置 
-	LCD_WriteRAM_Prepare();     //开始写入GRAM	
-	
-	memset(testBuf1,0xF800 + test1,sizeof(testBuf1));
-	test1 = 0;
-	
-	SPILCD_CS_RESET;  //LCD_CS=0
-	SPILCD_RS_SET;	
-	
-	HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 64);
-*/
-	// SPILCD_CS_SET;  //LCD_CS=1
+	SPILCD_CS_SET;  //LCD_CS=1	
 
+	test2 = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -177,19 +165,31 @@ SPILCD_CS_SET;  //LCD_CS=1
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	if(test1 == 100)
-	{
 		LCD_SetCursor(0x00,0x0000);	//设置光标位置 
+		
 		LCD_WriteRAM_Prepare();     //开始写入GRAM	
 		SPILCD_CS_RESET;  //LCD_CS=0
-	SPILCD_RS_SET;	
-		memset(testBuf1,0xF800 + test1,sizeof(testBuf1));
+	  SPILCD_RS_SET;	
 		
-		for(test = 0; test < 160; test++)
-			HAL_SPI_Transmit(&hspi1, (uint8_t*)testBuf1, 256,200);
+		test1+= 1000;
+		memset(testBuf1,test1,sizeof(testBuf1));
 		
+		HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
+		
+		/*for(test = 0; test < 64; test++)
+		{
+			SPILCD_CS_RESET;  //LCD_CS=0
+			memset(testBuf1,100+test+test1,sizeof(testBuf1));
+			HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
+			HAL_DMA_PollForTransfer(&hdma_spi1_tx,HAL_DMA_FULL_TRANSFER,1);
+			
+			SPILCD_CS_SET;
+		}*/
+		test2 ++;
 		SPILCD_CS_SET;
-	}
+	
+		if(test2 == 99)
+			while(1);
   }
   /* USER CODE END 3 */
 

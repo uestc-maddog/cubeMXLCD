@@ -240,9 +240,9 @@ void LCD_Clear(uint16_t color)
 	//SPILCD_CS_RESET;  //LCD_CS=0
 	//SPILCD_RS_SET;	
 	
-	for(index=0;index<64;index++)
+	for(index=0;index<32;index++)
 	{
-		HAL_SPI_Transmit(&hspi1, (uint8_t*)testBuf, 640,200);
+		HAL_SPI_Transmit(&hspi1, (uint8_t*)testBuf, 1280,200);
 		
 	}
 	//SPILCD_CS_SET;  //LCD_CS=1		
