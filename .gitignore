@@ -240,5 +240,4 @@ pip-log.txt
 *.pbd
 *.dbgdt
 
-Projects/zstack/Samples
-Projects/zstack/Utilities
+*.o
