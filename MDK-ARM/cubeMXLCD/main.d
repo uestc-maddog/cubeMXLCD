@@ -31,7 +31,7 @@ cubemxlcd\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_lptim_ex.h
 cubemxlcd\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr.h
 cubemxlcd\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h
 cubemxlcd\main.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h
-cubemxlcd\main.o: ../Inc/lcd.h
+cubemxlcd\main.o: ../Inc/flir_lcd.h
+cubemxlcd\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 cubemxlcd\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 cubemxlcd\main.o: ../Inc/sys.h
-cubemxlcd\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

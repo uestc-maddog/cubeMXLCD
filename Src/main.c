@@ -34,7 +34,7 @@
 #include "stm32l0xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-#include "lcd.h"
+#include "flir_lcd.h"
 #include <string.h>
 
 /* USER CODE END Includes */
@@ -69,10 +69,9 @@ static void MX_LPTIM1_Init(void);
 
 /* USER CODE BEGIN 0 */
 uint8_t test,test1,test2;
-uint16_t testBuf1[1280];
 
-void DMA_user_callback(DMA_HandleTypeDef * hdma);
 
+/*
 void xianshi()//????
 { 
 	BACK_COLOR=WHITE;
@@ -107,8 +106,7 @@ void showqq()
 		y+=40;
 	 }	  
 }
-
-uint8_t testData[20] = "I want to test!";
+*/
 /* USER CODE END 0 */
 
 int main(void)
@@ -135,27 +133,12 @@ int main(void)
   MX_LPTIM1_Init();
 
   /* USER CODE BEGIN 2 */
-	
-	
 	LCD_Init();	 
- 	POINT_COLOR=RED;//??????? 
-	test = 0;
-//	xianshi();	   //????
 
-//	showqq();	   //??QQ	
-
-	LCD_SetCursor(0x00,0x0000);	//设置光标位置 
-	
-	LCD_WriteRAM_Prepare();     //开始写入GRAM	
-	SPILCD_CS_RESET;  //LCD_CS=0
-	SPILCD_RS_SET;	
-	
-		for(test = 0; test < 50; test++)
-			LCD_Clear(1000 + 100*test);
+	for(test = 0; test < 50; test++)
+		LCD_Clear(1000 + 100*test);
 		
-	SPILCD_CS_SET;  //LCD_CS=1	
 
-	test2 = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -165,7 +148,8 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-		LCD_SetCursor(0x00,0x0000);	//设置光标位置 
+		/*
+		LCD_SetCursor(0x0000,0x0000);	//设置光标位置 
 		
 		LCD_WriteRAM_Prepare();     //开始写入GRAM	
 		SPILCD_CS_RESET;  //LCD_CS=0
@@ -189,7 +173,7 @@ int main(void)
 			test1++;		
 		}
 		
-		if (test == 64)
+		if (test == 63)
 		{
 			test2++;
 			memset(testBuf1,RED + 100*test2,sizeof(testBuf1));
@@ -203,7 +187,7 @@ int main(void)
 		SPILCD_CS_SET;
 	
 		if(test2 == 99)
-			while(1);
+			while(1);*/
   }
   /* USER CODE END 3 */
 

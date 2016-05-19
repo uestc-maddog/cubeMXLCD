@@ -20,7 +20,7 @@
 "cubemxlcd\stm32l0xx_hal_msp.o"
 "cubemxlcd\main.o"
 "cubemxlcd\stm32l0xx_it.o"
-"cubemxlcd\lcd.o"
+"cubemxlcd\flir_lcd.o"
 "cubemxlcd\startup_stm32l051xx.o"
 "cubemxlcd\system_stm32l0xx.o"
 --library_type=microlib --strict --scatter "cubeMXLCD\cubeMXLCD.sct"

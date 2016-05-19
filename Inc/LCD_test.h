@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "stm32l0xx_hal.h"
-#include "lcd.h"
+#include "flir_lcd.h"
 
 extern uint8_t test,test1;
 extern uint16_t testBuf1[640];

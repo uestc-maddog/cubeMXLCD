@@ -34,6 +34,6 @@ cubemxlcd\stm32l0xx_it.o: ../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.
 cubemxlcd\stm32l0xx_it.o: ../Inc/stm32l0xx_it.h
 cubemxlcd\stm32l0xx_it.o: ../Inc/LCD_test.h
 cubemxlcd\stm32l0xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
-cubemxlcd\stm32l0xx_it.o: ../Inc/lcd.h
+cubemxlcd\stm32l0xx_it.o: ../Inc/flir_lcd.h
 cubemxlcd\stm32l0xx_it.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 cubemxlcd\stm32l0xx_it.o: ../Inc/sys.h

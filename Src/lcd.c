@@ -102,12 +102,21 @@ void LCD_DisplayOff(void)
 //Ypos:纵坐标
 void LCD_SetCursor(uint16_t Xpos, uint16_t Ypos)
 {
-    LCD_WR_REG(lcddev.setxcmd); 
+	uint8_t temp;
+	
+  LCD_WR_REG(lcddev.setxcmd); 
 	LCD_WR_DATA8(Xpos>>8); 
 	LCD_WR_DATA8(Xpos&0XFF);	 
+	Xpos = 159;
+	LCD_WR_DATA8(Xpos>>8); 
+	LCD_WR_DATA8(Xpos&0XFF);	
+	
 	LCD_WR_REG(lcddev.setycmd); 
 	LCD_WR_DATA8(Ypos>>8); 
 	LCD_WR_DATA8(Ypos&0XFF);
+	Ypos = 127;
+	LCD_WR_DATA8(Ypos>>8); 
+	LCD_WR_DATA8(Ypos&0XFF);	
 } 	  
 
 //画点
@@ -122,14 +131,15 @@ void LCD_DrawPoint(uint16_t x,uint16_t y)
 //初始化lcd
 void LCD_Init(void)
 { 	 	
+	// Power on sequence first, HW/SW reset
 	LCD_REST=0;		 
  	delay_ms(50); // delay 20 ms 
-   	LCD_REST=1;		 
+  LCD_REST=1;		 
  	delay_ms(50); // delay 20 ms 
 
 	SPILCD_RST_RESET ;	//LCD_RST=0	 //SPI接口复位
 	delay_ms(20); // delay 20 ms 
-    SPILCD_RST_SET ;	//LCD_RST=1		
+  SPILCD_RST_SET ;	//LCD_RST=1		
 	delay_ms(20);
 
 	lcddev.width=128;
@@ -137,8 +147,9 @@ void LCD_Init(void)
 	lcddev.wramcmd=0X2C;
 	lcddev.setxcmd=0X2A;
 	lcddev.setycmd=0X2B; 	
-
-	LCD_WR_REG(0x11); //Sleep out
+	
+  //Sleep out
+	LCD_WR_REG(0x11);
 	delay_ms(120); //Delay 120ms
 	//------------------------------------ST7735S Frame Rate-----------------------------------------//
 	LCD_WR_REG(0xB1);
@@ -158,7 +169,7 @@ void LCD_Init(void)
 	LCD_WR_DATA8(0x3C);
 	//------------------------------------End ST7735S Frame Rate-----------------------------------------//
 	LCD_WR_REG(0xB4); //Dot inversion
-	LCD_WR_DATA8(0x03);
+	LCD_WR_DATA8(0x00); // 0x03
 	LCD_WR_REG(0xC0);
 	LCD_WR_DATA8(0x28);
 	LCD_WR_DATA8(0x08);
@@ -178,7 +189,7 @@ void LCD_Init(void)
 	LCD_WR_REG(0xC5); //VCOM
 	LCD_WR_DATA8(0x1A);
 	LCD_WR_REG(0x36); //MX, MY, RGB mode
-	LCD_WR_DATA8(0xC0);
+	LCD_WR_DATA8(0x20); // invert raw/column
 	//------------------------------------ST7735S Gamma Sequence-----------------------------------------//
 	LCD_WR_REG(0xE0);
 	LCD_WR_DATA8(0x04);
@@ -232,20 +243,19 @@ void LCD_Clear(uint16_t color)
 	//uint32_t totalpoint=lcddev.width;
 	//totalpoint*=lcddev.height; 	//得到总点数
 	
-	//LCD_SetCursor(0x00,0x0000);	//设置光标位置 
-	//LCD_WriteRAM_Prepare();     //开始写入GRAM	
+	LCD_SetCursor(0x00,0x0000);	//设置光标位置 
+	LCD_WriteRAM_Prepare();     //开始写入GRAM	
 	
 	memset(testBuf,color,sizeof(testBuf));
 	
-	//SPILCD_CS_RESET;  //LCD_CS=0
-	//SPILCD_RS_SET;	
+	SPILCD_CS_RESET;  //LCD_CS=0
+	SPILCD_RS_SET;	
 	
-	for(index=0;index<32;index++)
+	for(index=0;index<64;index++)
 	{
-		HAL_SPI_Transmit(&hspi1, (uint8_t*)testBuf, 1280,200);
-		
+		HAL_SPI_Transmit(&hspi1, (uint8_t*)testBuf, 640,200);	
 	}
-	//SPILCD_CS_SET;  //LCD_CS=1		
+	SPILCD_CS_SET;  //LCD_CS=1		
 
 }  
 //在指定区域内填充单个颜色
