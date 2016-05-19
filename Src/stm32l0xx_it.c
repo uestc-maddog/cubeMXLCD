@@ -108,7 +108,7 @@ void DMA1_Channel2_3_IRQHandler(void)
 	// Check whether the interrupt is a transmit finish interrupt
 	if(__HAL_DMA_GET_FLAG(&hdma_spi1_tx, __HAL_DMA_GET_TC_FLAG_INDEX(&hdma_spi1_tx)) != RESET)
 	{
-		HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
+		test++;
 	}
 		 
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */

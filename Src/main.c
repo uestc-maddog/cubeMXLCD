@@ -171,21 +171,35 @@ int main(void)
 		SPILCD_CS_RESET;  //LCD_CS=0
 	  SPILCD_RS_SET;	
 		
-		test1+= 1000;
 		memset(testBuf1,test1,sizeof(testBuf1));
 		
+		test = 0;
+		test1 = 1;
+		memset(testBuf1,test1,sizeof(testBuf1));
 		HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
 		
-		/*for(test = 0; test < 64; test++)
+		test2 =0;
+		
+		while(1)
 		{
-			SPILCD_CS_RESET;  //LCD_CS=0
-			memset(testBuf1,100+test+test1,sizeof(testBuf1));
+		if(test == test1)
+		{
+			//delay_ms(1);
 			HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
-			HAL_DMA_PollForTransfer(&hdma_spi1_tx,HAL_DMA_FULL_TRANSFER,1);
-			
-			SPILCD_CS_SET;
-		}*/
-		test2 ++;
+			test1++;		
+		}
+		
+		if (test == 64)
+		{
+			test2++;
+			memset(testBuf1,RED + 100*test2,sizeof(testBuf1));
+			delay_ms(500);
+		}
+		
+		if (test2 == 99)
+			while(1);
+	}
+
 		SPILCD_CS_SET;
 	
 		if(test2 == 99)

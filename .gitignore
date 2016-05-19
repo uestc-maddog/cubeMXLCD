@@ -241,3 +241,6 @@ pip-log.txt
 *.dbgdt
 
 *.o
+*.axf
+*.s
+*.htm
