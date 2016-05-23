@@ -486,9 +486,14 @@
               <FilePath>../Src/stm32l0xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>lcd.c</FileName>
+              <FileName>flir_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Src\lcd.c</FilePath>
+              <FilePath>..\Src\flir_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>flir_display.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\flir_display.c</FilePath>
             </File>
           </Files>
         </Group>

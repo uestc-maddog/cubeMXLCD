@@ -50,8 +50,6 @@
 #define LCD_CLEAR_BUF_SIZ	320	
 #define LCD_CLEAR_ROUND		(LCD_FULSIZE_BUF/LCD_CLEAR_BUF_SIZ)
 
-// flir camera data buffer size
-#define LCD_FLIR_SPI_BUF_SIZ	640
 
 /* Control related*/
 //LCD_RST
