@@ -35,11 +35,17 @@
 
 /* USER CODE BEGIN Includes */
 #include "flir_lcd.h"
+#include "flir_display.h"
+
 #include <string.h>
 
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+CRC_HandleTypeDef hcrc;
+
+I2C_HandleTypeDef hi2c1;
+
 IWDG_HandleTypeDef hiwdg;
 
 LPTIM_HandleTypeDef hlptim1;
@@ -47,6 +53,9 @@ LPTIM_HandleTypeDef hlptim1;
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi1_tx;
+DMA_HandleTypeDef hdma_spi2_rx;
+
+DMA_HandleTypeDef hdma_memtomem_dma1_channel1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -61,6 +70,8 @@ static void MX_IWDG_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_LPTIM1_Init(void);
+static void MX_CRC_Init(void);
+static void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -70,43 +81,6 @@ static void MX_LPTIM1_Init(void);
 /* USER CODE BEGIN 0 */
 uint8_t test,test1,test2;
 
-
-/*
-void xianshi()//????
-{ 
-	BACK_COLOR=WHITE;
-	POINT_COLOR=RED;   
-	//??32*32??
-	showhanzi32(0,0,0);	 //?
-	showhanzi32(40,0,1);	 //?
-	showhanzi32(80,0,2);    //?
-	//??16*16??
-	showhanzi16(0,35,0);	  //?
-	showhanzi16(20,35,1);	  //?
-	showhanzi16(40,35,2);	  //?
-	showhanzi16(60,35,3);	  //?
-	showhanzi16(80,35,4);	  //?
-	showhanzi16(100,35,5);	  //?	   
-	LCD_ShowString(0,55,200,16,16,"1.8 TFT SPI");
-}
-
-void showqq()
-{ 
-	uint16_t x,y; 
-	x=0;
-	y=75;
-	while(y<lcddev.height-39)
-	{
-		x=0;
-		while(x<lcddev.width-39)
-		{
-			showimage(x,y);	
-			x+=40;
-		}
-		y+=40;
-	 }	  
-}
-*/
 /* USER CODE END 0 */
 
 int main(void)
@@ -131,13 +105,14 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_LPTIM1_Init();
+  MX_CRC_Init();
+  MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
-	LCD_Init();	 
-
-	for(test = 0; test < 50; test++)
-		LCD_Clear(1000 + 100*test);
-		
+	// Init LCD
+	// Init LCD and also control parameters
+	initFlir_Display();	 
+	
 
   /* USER CODE END 2 */
 
@@ -148,7 +123,11 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-		/*
+	/*
+		if(flir_RXCpl)
+			flir_display_recDataCheck();
+		
+		
 		LCD_SetCursor(0x0000,0x0000);	//设置光标位置 
 		
 		LCD_WriteRAM_Prepare();     //开始写入GRAM	
@@ -223,7 +202,8 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_LPTIM1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1|RCC_PERIPHCLK_LPTIM1;
+  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
   PeriphClkInit.LptimClockSelection = RCC_LPTIM1CLKSOURCE_LSI;
   HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 
@@ -233,6 +213,41 @@ void SystemClock_Config(void)
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+/* CRC init function */
+void MX_CRC_Init(void)
+{
+
+  hcrc.Instance = CRC;
+  hcrc.Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_ENABLE;
+  hcrc.Init.DefaultInitValueUse = DEFAULT_INIT_VALUE_ENABLE;
+  hcrc.Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_NONE;
+  hcrc.Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_DISABLE;
+  hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES;
+  HAL_CRC_Init(&hcrc);
+
+}
+
+/* I2C1 init function */
+void MX_I2C1_Init(void)
+{
+
+  hi2c1.Instance = I2C1;
+  hi2c1.Init.Timing = 0x00000708;
+  hi2c1.Init.OwnAddress1 = 0;
+  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+  hi2c1.Init.OwnAddress2 = 0;
+  hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
+  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+  HAL_I2C_Init(&hi2c1);
+
+    /**Configure Analogue filter 
+    */
+  HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE);
+
 }
 
 /* IWDG init function */
@@ -304,16 +319,33 @@ void MX_SPI2_Init(void)
 
 /** 
   * Enable DMA controller clock
+  * Configure DMA for memory to memory transfers
+  *   hdma_memtomem_dma1_channel1
   */
 void MX_DMA_Init(void) 
 {
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
 
+  /* Configure DMA request hdma_memtomem_dma1_channel1 on DMA1_Channel1 */
+  hdma_memtomem_dma1_channel1.Instance = DMA1_Channel1;
+  hdma_memtomem_dma1_channel1.Init.Request = DMA_REQUEST_0;
+  hdma_memtomem_dma1_channel1.Init.Direction = DMA_MEMORY_TO_MEMORY;
+  hdma_memtomem_dma1_channel1.Init.PeriphInc = DMA_PINC_ENABLE;
+  hdma_memtomem_dma1_channel1.Init.MemInc = DMA_MINC_ENABLE;
+  hdma_memtomem_dma1_channel1.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+  hdma_memtomem_dma1_channel1.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+  hdma_memtomem_dma1_channel1.Init.Mode = DMA_NORMAL;
+  hdma_memtomem_dma1_channel1.Init.Priority = DMA_PRIORITY_LOW;
+  HAL_DMA_Init(&hdma_memtomem_dma1_channel1);
+
   /* DMA interrupt init */
   /* DMA1_Channel2_3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel2_3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel2_3_IRQn);
+  /* DMA1_Channel4_5_6_7_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel4_5_6_7_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel4_5_6_7_IRQn);
 
 }
 
@@ -334,8 +366,8 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  /*Configure GPIO pin : PA3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3;
+  /*Configure GPIO pins : PA3 PA8 PA9 PA10 */
+  GPIO_InitStruct.Pin = GPIO_PIN_3|GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);

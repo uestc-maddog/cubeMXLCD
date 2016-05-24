@@ -27,10 +27,6 @@
 #include "flir_lcd.h"
 #include "font.h"  
 
-/* Delay function */
-#include "delay.h"
-
-
 /********************************************************************************************************
  *                                                 MACROS
  ********************************************************************************************************/
@@ -151,14 +147,14 @@ void LCD_Init(void)
 { 	 	
 	// Power on sequence first, HW/SW reset
 	LCD_REST=0;		 
- 	delay_ms(50); // delay 20 ms 
+ 	HAL_Delay(50); // delay 20 ms 
 	LCD_REST=1;		 
- 	delay_ms(50); // delay 20 ms 
+ 	HAL_Delay(50); // delay 20 ms 
 
 	SPILCD_RST_RESET ;	//LCD_RST=0	 //SPI接口复位
-	delay_ms(20); // delay 20 ms 
+	HAL_Delay(20); // delay 20 ms 
 	SPILCD_RST_SET ;	//LCD_RST=1		
-	delay_ms(20);
+	HAL_Delay(20);
 
 	lcddev.width=128;
 	lcddev.height=160;
@@ -168,7 +164,7 @@ void LCD_Init(void)
 	
 	//Sleep out
 	LCD_WR_REG(0x11);
-	delay_ms(120); //Delay 120ms
+	HAL_Delay(120); //Delay 120ms
 	//------------------------------------ST7735S Frame Rate-----------------------------------------//
 	LCD_WR_REG(0xB1);
 	LCD_WR_DATA8(0x05);
@@ -249,7 +245,7 @@ void LCD_Init(void)
 	LCD_WR_REG(0x29); //Display on
 
 	// reset to white screen
-	LCD_Clear(BLACK); 
+	LCD_Clear(WHITE); 
 }  
 
 

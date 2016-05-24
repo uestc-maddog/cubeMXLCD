@@ -36,12 +36,14 @@
 #include "stm32l0xx_it.h"
 
 /* USER CODE BEGIN 0 */
-#include "LCD_test.h"
 #include "stm32l0xx_hal_def.h"
+
+#include "flir_display.h"
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_spi1_tx;
+extern DMA_HandleTypeDef hdma_spi2_rx;
 
 /******************************************************************************/
 /*            Cortex-M0+ Processor Interruption and Exception Handlers         */ 
@@ -105,10 +107,12 @@ void SysTick_Handler(void)
 void DMA1_Channel2_3_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
+	// Channel 3: SPI1 -> LCD display, transmitting interrupt
 	// Check whether the interrupt is a transmit finish interrupt
 	if(__HAL_DMA_GET_FLAG(&hdma_spi1_tx, __HAL_DMA_GET_TC_FLAG_INDEX(&hdma_spi1_tx)) != RESET)
 	{
-		test++;
+		// previous transmit finish, continous
+		flir_TXCpl = true;
 	}
 		 
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */
@@ -116,6 +120,27 @@ void DMA1_Channel2_3_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 1 */
 
   /* USER CODE END DMA1_Channel2_3_IRQn 1 */
+}
+
+/**
+* @brief This function handles DMA1 channel 4, channel 5, channel 6 and channel 7 interrupts.
+*/
+void DMA1_Channel4_5_6_7_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 0 */
+	// Channel 4: SPI2 -> Flir camera, receiving interrupt
+	// Check whether the interrupt is a transmit finish interrupt
+	if(__HAL_DMA_GET_FLAG(&hdma_spi2_rx, __HAL_DMA_GET_TC_FLAG_INDEX(&hdma_spi2_rx)) != RESET)
+	{
+		// previous receiving finish, continous
+		flir_RXCpl = true;
+	}
+	
+  /* USER CODE END DMA1_Channel4_5_6_7_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_spi2_rx);
+  /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 1 */
+
+  /* USER CODE END DMA1_Channel4_5_6_7_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

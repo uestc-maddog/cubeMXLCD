@@ -1,9 +1,8 @@
 /*-----------------------------------------------------------------
- * Name:      delay.h
- * Purpose:   Provide basic delay function
+ * Name:      crc16.h
+ * Purpose:   crc16 head file
  *-----------------------------------------------------------------
- * Only delay_ms function provided currently.
- *
+ * 
  * Copyright (c) *reserve
  
 ||                       _      _               ||
@@ -15,45 +14,32 @@
 ||                                              ||
 
  -----------------------------------------------------------------*/
-#ifndef DELAY_H_
-#define DELAY_H_
-
+#ifndef CRC_16_H_
+#define CRC_16_H_
 /********************************************************************************************************
  *                                               INCLUDES
  ********************************************************************************************************/
 #include <stdint.h>
-#include "stm32l0xx_hal.h"
 
- 
+
 /********************************************************************************************************
  *                                               PUBLIC FUNCTIONS
  ********************************************************************************************************/
  
 /*********************************************************************
- * @fn      delay_ms
+ * @fn      Crc16
  *
- * @brief   Use system tick to provide ms delay
+ * @brief   calculate crc 16 value
  *
- * @param   uint32_t d_time - the time want to poll.
+ * @param   const void *vptr -> input data pointer
+ *					uint32_t len -> data length
  *
- * @return  none
+ * @return  uint16_t -> crc value
  */
-void delay_ms(uint32_t d_time)
-{
-	uint32_t ticktemp;
-	uint32_t tickstart = 0;
-	
-	// get system tick
-	tickstart = HAL_GetTick();
-	
-	// wait till time come
-	do
-	{
-		ticktemp = HAL_GetTick();
-	}while((d_time != 0) && ((ticktemp - tickstart) <= d_time));
-}
+extern uint16_t Crc16(const void *vptr, uint32_t len);
 
 #endif
 /*********************************************************************
  */
+ 
 

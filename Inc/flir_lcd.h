@@ -24,6 +24,8 @@
 ||                                              ||
 
  -----------------------------------------------------------------*/
+ #ifndef FLIR_LCD_H_
+ #define FLIR_LCD_H_
  
 /********************************************************************************************************
  *                                               INCLUDES
@@ -166,6 +168,19 @@ extern void LCD_Init(void);
  */
 extern void LCD_Clear(uint16_t);
 
+/*********************************************************************
+ * @fn      LCD_WriteRAM_Prepare
+ *
+ * @brief   Prepare to send graphic information to GRam.
+ *			The graphic data should be transmit after this command. 
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void LCD_WriteRAM_Prepare(void);
+
+#endif
 /*********************************************************************
  */
 

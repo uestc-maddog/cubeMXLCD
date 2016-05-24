@@ -1,8 +1,10 @@
 /*-----------------------------------------------------------------
- * Name:      flir_display.h
- * Purpose:   
+ * Name:      crc16.c
+ * Purpose:   calculate crc16 value
  *-----------------------------------------------------------------
- * 
+ * Calculate crc16 value. The generation polynomial is 
+ *  X16 + X12 + X5 + 1
+ *
  * Copyright (c) *reserve
  
 ||                       _      _               ||
@@ -14,86 +16,63 @@
 ||                                              ||
 
  -----------------------------------------------------------------*/
- #ifndef FLIR_DISPLAY_H_
- #define FLIR_DISPLAY_H_
+ 
 /********************************************************************************************************
  *                                               INCLUDES
  ********************************************************************************************************/
 #include <stdint.h>
-#include <stdbool.h>
+
+#include "crc16.h"
 
 /********************************************************************************************************
  *                                                 MACROS
  ********************************************************************************************************/
-// flir camera data buffer size
-#define LCD_FLIR_SPI_BUF_SIZ	640
-#define LCD_FLIR_RX_BUF_SIZ		164
-
-#define FLIR_TELE_LINE	60
-
-#define LCD_YPOS_OFFSET	4
-
-//FLIR_CS  
-#define FLIR_CS_SET 	 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET)//PB2 
-#define FLIR_CS_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET)//PB2
+#define POLYNOMIAL 0x1021
 
 /********************************************************************************************************
- *                                               CONSTANTS
+ *                                               LOCAL VARIABLES
  ********************************************************************************************************/
 
  
 /********************************************************************************************************
- *                                               EXTERNAL VARIABLES
+ *                                               LOCAL FUNCTIONS
  ********************************************************************************************************/
-extern volatile bool flir_TXCpl;
-extern volatile bool flir_RXCpl;
 
-extern uint8_t rawPos_buf; // save next start row position
-extern uint8_t colPos_buf; // save next start column position
-
+ 
 /********************************************************************************************************
- *                                               EXTERNAL FUNCTIONS
+ *                                               PUBLIC FUNCTIONS
  ********************************************************************************************************/
-
+ 
 /*********************************************************************
- * @fn      initFlir_Display
+ * @fn      Crc16
  *
- * @brief   Init flir display. Initial hardware required and parameters.
- *          register event and event callback function.
+ * @brief   calculate crc 16 value. Generation polynomial:
+ *					X16 + X12 + X5 + 1
  *
- * @param   
+ * @param   const void *vptr -> input data pointer
+ *					uint32_t len -> data length
  *
- * @return  
+ * @return  uint16_t -> crc value
  */
-extern void initFlir_Display( void );
-
-/*********************************************************************
- * @fn      initFlir_Display
- *
- * @brief   Init flir display. Initial hardware required and parameters.
- *          register event and event callback function.
- *
- * @param   none
- *
- * @return  none
- */
-extern bool flir_display_startReceive( void );
-
-/*********************************************************************
- * @fn      flir_display_recDataCheck
- *
- * @brief   Check whether a receiving data is valid. Check CRC to 
- *					verify the synchronize and then check ID to determine 
- *          whether need to display this data.
- *
- * @param   none
- *
- * @return  none
- */
-extern bool flir_display_recDataCheck( void );
-
-#endif
-/*********************************************************************
- */
-  
+uint16_t Crc16(const void *vptr, uint32_t len)
+{
+	const uint8_t *data = vptr;
+	uint16_t crc = 0;
+	uint8_t i;
 	
+	// calculate crc value
+	while (len--) {
+    crc ^= *(unsigned char *)data++ << 8;
+    for (i=0; i < 8; i++)
+        crc = crc & 0x8000 ? (crc << 1) ^ POLYNOMIAL : crc << 1;
+	}
+	
+	return crc & 0xffff;
+}
+
+
+
+/*********************************************************************
+ */
+
+
