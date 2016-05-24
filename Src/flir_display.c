@@ -207,7 +207,8 @@ bool flir_display_recDataCheck( void )
 	// clear receiving buf
 	memset(flir_rxBuf, 0, LCD_FLIR_RX_BUF_SIZ);
 	// now, receiving DMA is okay to perform another receiving
-	// startReceiving!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	HAL_SPI_Receive_DMA(&hspi2, flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
+	
 	
 	// now the data is valid, check whether need to display the frame
 	if((idTemp & 0x0F00) == 0x0f00)
