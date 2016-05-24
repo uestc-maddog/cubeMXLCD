@@ -42,10 +42,6 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
-CRC_HandleTypeDef hcrc;
-
-I2C_HandleTypeDef hi2c1;
-
 IWDG_HandleTypeDef hiwdg;
 
 LPTIM_HandleTypeDef hlptim1;
@@ -54,8 +50,6 @@ SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi1_tx;
 DMA_HandleTypeDef hdma_spi2_rx;
-
-DMA_HandleTypeDef hdma_memtomem_dma1_channel1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -70,8 +64,6 @@ static void MX_IWDG_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_LPTIM1_Init(void);
-static void MX_CRC_Init(void);
-static void MX_I2C1_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -105,15 +97,12 @@ int main(void)
   MX_SPI1_Init();
   MX_SPI2_Init();
   MX_LPTIM1_Init();
-  MX_CRC_Init();
-  MX_I2C1_Init();
 
   /* USER CODE BEGIN 2 */
 	// Init LCD
 	// Init LCD and also control parameters
 	initFlir_Display();	 
-	
-
+		
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -202,8 +191,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_I2C1|RCC_PERIPHCLK_LPTIM1;
-  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_LPTIM1;
   PeriphClkInit.LptimClockSelection = RCC_LPTIM1CLKSOURCE_LSI;
   HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
 
@@ -213,41 +201,6 @@ void SystemClock_Config(void)
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
-}
-
-/* CRC init function */
-void MX_CRC_Init(void)
-{
-
-  hcrc.Instance = CRC;
-  hcrc.Init.DefaultPolynomialUse = DEFAULT_POLYNOMIAL_ENABLE;
-  hcrc.Init.DefaultInitValueUse = DEFAULT_INIT_VALUE_ENABLE;
-  hcrc.Init.InputDataInversionMode = CRC_INPUTDATA_INVERSION_NONE;
-  hcrc.Init.OutputDataInversionMode = CRC_OUTPUTDATA_INVERSION_DISABLE;
-  hcrc.InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES;
-  HAL_CRC_Init(&hcrc);
-
-}
-
-/* I2C1 init function */
-void MX_I2C1_Init(void)
-{
-
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x00000708;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.OwnAddress2Masks = I2C_OA2_NOMASK;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  HAL_I2C_Init(&hi2c1);
-
-    /**Configure Analogue filter 
-    */
-  HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE);
-
 }
 
 /* IWDG init function */
@@ -287,7 +240,7 @@ void MX_SPI1_Init(void)
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi1.Init.NSS = SPI_NSS_HARD_OUTPUT;
+  hspi1.Init.NSS = SPI_NSS_SOFT;
   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
@@ -319,25 +272,11 @@ void MX_SPI2_Init(void)
 
 /** 
   * Enable DMA controller clock
-  * Configure DMA for memory to memory transfers
-  *   hdma_memtomem_dma1_channel1
   */
 void MX_DMA_Init(void) 
 {
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
-
-  /* Configure DMA request hdma_memtomem_dma1_channel1 on DMA1_Channel1 */
-  hdma_memtomem_dma1_channel1.Instance = DMA1_Channel1;
-  hdma_memtomem_dma1_channel1.Init.Request = DMA_REQUEST_0;
-  hdma_memtomem_dma1_channel1.Init.Direction = DMA_MEMORY_TO_MEMORY;
-  hdma_memtomem_dma1_channel1.Init.PeriphInc = DMA_PINC_ENABLE;
-  hdma_memtomem_dma1_channel1.Init.MemInc = DMA_MINC_ENABLE;
-  hdma_memtomem_dma1_channel1.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-  hdma_memtomem_dma1_channel1.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-  hdma_memtomem_dma1_channel1.Init.Mode = DMA_NORMAL;
-  hdma_memtomem_dma1_channel1.Init.Priority = DMA_PRIORITY_LOW;
-  HAL_DMA_Init(&hdma_memtomem_dma1_channel1);
 
   /* DMA interrupt init */
   /* DMA1_Channel2_3_IRQn interrupt configuration */
@@ -372,12 +311,22 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : PA4 */
+  GPIO_InitStruct.Pin = GPIO_PIN_4;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /*Configure GPIO pins : PB0 PB1 PB2 */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2, GPIO_PIN_RESET);
