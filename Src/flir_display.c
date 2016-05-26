@@ -188,18 +188,13 @@ bool flir_display_recDataCheck( void )
 	// obtain the ID
 	idTemp = (flir_rxBuf[0] << 8) + flir_rxBuf[1];
 	
-	buf[temp] = idTemp;
-	temp++;
-	if(temp == 1999)
-		while(1);
-	
 	// set the four most-significant bits of ID and crc part as zero, prepare to send
 	flir_rxBuf[0] &= 0x0F;
 	flir_rxBuf[2] = 0;
 	flir_rxBuf[3] = 0;
 	
 	// decide whether a re-synchronize is needed
-	if(crcTemp != crc16(flir_rxBuf, LCD_FLIR_RX_BUF_SIZ))
+	if(crcTemp != CalcCRC16Bytes(LCD_FLIR_RX_BUF_SIZ, (char*)flir_rxBuf))
 	{
 		// start re-synchronize
 		flir_reSyc();
@@ -219,6 +214,12 @@ bool flir_display_recDataCheck( void )
 	// now the data is valid, check whether need to display the frame
 	if((idTemp & 0x0F00) != 0x0f00)
 	{		
+		
+	buf[temp] = idTemp;
+	temp++;
+	if(temp == 1999)
+		while(1);	
+	
 		// check whether previous transmit finish, poll here
 		i = 1000;
 		while(!flir_TXCpl)
@@ -297,7 +298,7 @@ bool flir_display_recDataCheck( void )
 bool flir_reSyc( void )
 {
 	// de-assert CE for at least 185ms
-	FLIR_CS_SET;
+	// FLIR_CS_SET;
 	
 	// re-synchronize frame. display should reset
 	rawPos_buf = 0;
@@ -309,7 +310,7 @@ bool flir_reSyc( void )
 	HAL_Delay(200);
 	
 	// assert CE, the flir cammera is now re-synchronized
-	FLIR_CS_RESET;
+	// FLIR_CS_RESET;
 
 	// start receive again
 	flir_display_startRec();
