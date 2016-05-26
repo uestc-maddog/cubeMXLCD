@@ -34,8 +34,8 @@
 #define LCD_YPOS_OFFSET	4
 
 //FLIR_CS  
-#define FLIR_CS_SET 	 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET)//PB2 
-#define FLIR_CS_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET)//PB2
+#define FLIR_CS_SET 	 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET)//PB12 
+#define FLIR_CS_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET)//PB12
 
 /********************************************************************************************************
  *                                               CONSTANTS
@@ -92,6 +92,19 @@ extern bool flir_display_startReceive( void );
  */
 extern bool flir_display_recDataCheck( void );
 
+/*********************************************************************
+ * @fn      flir_display_recDataCheck
+ *
+ * @brief   Check whether a receiving data is valid. Check CRC to 
+ *					verify the synchronize and then check ID to determine 
+ *          whether need to display this data.
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+bool flir_display_startRec( void );
+	
 #endif
 /*********************************************************************
  */

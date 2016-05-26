@@ -44,12 +44,12 @@
 /* Private variables ---------------------------------------------------------*/
 IWDG_HandleTypeDef hiwdg;
 
-LPTIM_HandleTypeDef hlptim1;
-
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi1_tx;
 DMA_HandleTypeDef hdma_spi2_rx;
+
+TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -63,7 +63,7 @@ static void MX_DMA_Init(void);
 static void MX_IWDG_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
-static void MX_LPTIM1_Init(void);
+static void MX_TIM6_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -96,13 +96,20 @@ int main(void)
   MX_IWDG_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
-  MX_LPTIM1_Init();
+  MX_TIM6_Init();
 
   /* USER CODE BEGIN 2 */
+	HAL_NVIC_SetPriority(TIM6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(TIM6_IRQn);
+	HAL_TIM_Base_Start_IT(&htim6);
+	
 	// Init LCD
 	// Init LCD and also control parameters
 	initFlir_Display();	 
-		
+
+	// start receiving
+	flir_display_startRec();
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -112,50 +119,13 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-	/*
-		if(flir_RXCpl)
-			flir_display_recDataCheck();
-		
-		
-		LCD_SetCursor(0x0000,0x0000);	//设置光标位置 
-		
-		LCD_WriteRAM_Prepare();     //开始写入GRAM	
-		SPILCD_CS_RESET;  //LCD_CS=0
-	  SPILCD_RS_SET;	
-		
-		memset(testBuf1,test1,sizeof(testBuf1));
-		
-		test = 0;
-		test1 = 1;
-		memset(testBuf1,test1,sizeof(testBuf1));
-		HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
-		
-		test2 =0;
-		
-		while(1)
-		{
-		if(test == test1)
-		{
-			//delay_ms(1);
-			HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)testBuf1, 640);
-			test1++;		
-		}
-		
-		if (test == 63)
-		{
-			test2++;
-			memset(testBuf1,RED + 100*test2,sizeof(testBuf1));
-			delay_ms(500);
-		}
-		
-		if (test2 == 99)
-			while(1);
-	}
 
-		SPILCD_CS_SET;
-	
-		if(test2 == 99)
-			while(1);*/
+	// if receiving finish, check and responce
+		if(flir_RXCpl)
+		{
+			flir_display_recDataCheck();
+		}
+
   }
   /* USER CODE END 3 */
 
@@ -168,7 +138,6 @@ void SystemClock_Config(void)
 
   RCC_OscInitTypeDef RCC_OscInitStruct;
   RCC_ClkInitTypeDef RCC_ClkInitStruct;
-  RCC_PeriphCLKInitTypeDef PeriphClkInit;
 
   __HAL_RCC_PWR_CLK_ENABLE();
 
@@ -191,10 +160,6 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
 
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_LPTIM1;
-  PeriphClkInit.LptimClockSelection = RCC_LPTIM1CLKSOURCE_LSI;
-  HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
-
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
   HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
@@ -212,21 +177,6 @@ void MX_IWDG_Init(void)
   hiwdg.Init.Window = 4095;
   hiwdg.Init.Reload = 4095;
   HAL_IWDG_Init(&hiwdg);
-
-}
-
-/* LPTIM1 init function */
-void MX_LPTIM1_Init(void)
-{
-
-  hlptim1.Instance = LPTIM1;
-  hlptim1.Init.Clock.Source = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
-  hlptim1.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV1;
-  hlptim1.Init.Trigger.Source = LPTIM_TRIGSOURCE_SOFTWARE;
-  hlptim1.Init.OutputPolarity = LPTIM_OUTPUTPOLARITY_HIGH;
-  hlptim1.Init.UpdateMode = LPTIM_UPDATE_IMMEDIATE;
-  hlptim1.Init.CounterSource = LPTIM_COUNTERSOURCE_INTERNAL;
-  HAL_LPTIM_Init(&hlptim1);
 
 }
 
@@ -258,15 +208,33 @@ void MX_SPI2_Init(void)
   hspi2.Init.Mode = SPI_MODE_MASTER;
   hspi2.Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
   hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
-  hspi2.Init.NSS = SPI_NSS_HARD_OUTPUT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
   hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi2.Init.CRCPolynomial = 7;
   HAL_SPI_Init(&hspi2);
+
+}
+
+/* TIM6 init function */
+void MX_TIM6_Init(void)
+{
+
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 3200;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 10000;
+  HAL_TIM_Base_Init(&htim6);
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
 
 }
 
@@ -318,18 +286,25 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB0 PB1 PB2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2;
+  /*Configure GPIO pins : PB0 PB1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_12, GPIO_PIN_RESET);
 
 }
 

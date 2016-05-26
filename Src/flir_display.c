@@ -42,7 +42,7 @@
 /********************************************************************************************************
  *                                               GLOBAL VARIABLES
  ********************************************************************************************************/
-volatile bool flir_TXCpl = false;
+volatile bool flir_TXCpl = true;
 volatile bool flir_RXCpl = false;
 
 // control variable
@@ -104,7 +104,7 @@ void initFlir_Display( void )
 	// init LCD parameters.
 	rawPos_buf = 0;
 	colPos_buf = 0;
-	flir_TXCpl = false;
+	flir_TXCpl = true;
 	flir_RXCpl = false;
 	
 	// start flir camera through a start up sequence
@@ -134,29 +134,28 @@ void initFlir_Display( void )
 	flir_display_DMAPoll(flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
 	// end this transmission
 	flir_endDisplay();
+
+	// delay 250 ms here to make flir stable
+	HAL_Delay(250);
+	
+	flir_reSyc();
 }
 
 /*********************************************************************
- * @fn      flir_display_startReceive
+ * @fn      flir_display_recDataCheck
  *
- * @brief   Call this function to start query data from camera
+ * @brief   Check whether a receiving data is valid. Check CRC to 
+ *					verify the synchronize and then check ID to determine 
+ *          whether need to display this data.
  *
  * @param   none
  *
  * @return  none
  */
-bool flir_display_startReceive( void )
+bool flir_display_startRec( void )
 {
-	// get the raw data correct
-	rawPos_buf = 0;
-	colPos_buf = 0;
-
-	// clear buffer
-	memset(flir_rxBuf, 0, sizeof(flir_rxBuf));	
-		
-	// start DMA receiving data
+	// start receiving frams
 	HAL_SPI_Receive_DMA(&hspi2, flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
-	
 	return true;
 }
 
@@ -171,13 +170,15 @@ bool flir_display_startReceive( void )
  *
  * @return  none
  */
+static uint16_t buf[2000];
+static uint16_t temp = 0;
 bool flir_display_recDataCheck( void )
 {
 	uint16_t crcTemp;
 	uint16_t idTemp;
 	uint8_t rawTemp;
 	uint16_t i;
-
+	
 	// reset complete flag 
 	flir_RXCpl = false;
 	
@@ -187,13 +188,18 @@ bool flir_display_recDataCheck( void )
 	// obtain the ID
 	idTemp = (flir_rxBuf[0] << 8) + flir_rxBuf[1];
 	
+	buf[temp] = idTemp;
+	temp++;
+	if(temp == 1999)
+		while(1);
+	
 	// set the four most-significant bits of ID and crc part as zero, prepare to send
 	flir_rxBuf[0] &= 0x0F;
 	flir_rxBuf[2] = 0;
 	flir_rxBuf[3] = 0;
 	
 	// decide whether a re-synchronize is needed
-	if(crcTemp != Crc16(flir_rxBuf, LCD_FLIR_RX_BUF_SIZ))
+	if(crcTemp != crc16(flir_rxBuf, LCD_FLIR_RX_BUF_SIZ))
 	{
 		// start re-synchronize
 		flir_reSyc();
@@ -207,11 +213,11 @@ bool flir_display_recDataCheck( void )
 	// clear receiving buf
 	memset(flir_rxBuf, 0, LCD_FLIR_RX_BUF_SIZ);
 	// now, receiving DMA is okay to perform another receiving
-	HAL_SPI_Receive_DMA(&hspi2, flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
+	flir_display_startRec();
 	
 	
 	// now the data is valid, check whether need to display the frame
-	if((idTemp & 0x0F00) == 0x0f00)
+	if((idTemp & 0x0F00) != 0x0f00)
 	{		
 		// check whether previous transmit finish, poll here
 		i = 1000;
@@ -225,9 +231,6 @@ bool flir_display_recDataCheck( void )
 			if(!i)
 				return false;
 		}
-		
-		// clear TX finish flag
-		flir_TXCpl = false;
 		
 		// frame data available, prepare to send frame
 		for(i = 0; i < (LCD_FLIR_RX_BUF_SIZ - 4); i++)
@@ -253,6 +256,9 @@ bool flir_display_recDataCheck( void )
 			}
 			// save current raw information
 			rawPos_buf = rawTemp;
+					
+			// clear TX finish flag
+			flir_TXCpl = false;
 			
 			// transmit data
 			HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
@@ -296,14 +302,17 @@ bool flir_reSyc( void )
 	// re-synchronize frame. display should reset
 	rawPos_buf = 0;
 	colPos_buf = 0;
-	flir_TXCpl = false;
+	flir_TXCpl = true;
 	flir_RXCpl = false;
 	
 	// delay 200ms
 	HAL_Delay(200);
 	
 	// assert CE, the flir cammera is now re-synchronized
-	FLIR_CS_RESET;	
+	FLIR_CS_RESET;
+
+	// start receive again
+	flir_display_startRec();
 	
 	return true;
 }
@@ -320,6 +329,9 @@ bool flir_reSyc( void )
 bool flir_startSeq( void )
 {
 	// not sure whether needed
+	// assert CE, the flir cammera is now re-synchronized
+	FLIR_CS_RESET;
+	
 	return true;
 }
 

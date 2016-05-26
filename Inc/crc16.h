@@ -38,6 +38,7 @@
  */
 extern uint16_t Crc16(const void *vptr, uint32_t len);
 
+extern unsigned short crc16(const void *vptr, unsigned short length);
 #endif
 /*********************************************************************
  */
