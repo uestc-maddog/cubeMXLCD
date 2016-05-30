@@ -575,7 +575,7 @@ I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim_ex.h)(0x573BC6C5)
-F (../Src/main.c)(0x574BEFF3)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\main.o --omf_browse cubemxlcd\main.crf --depend cubemxlcd\main.d)
+F (../Src/main.c)(0x574BF8D1)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\main.o --omf_browse cubemxlcd\main.crf --depend cubemxlcd\main.d)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x573BC6C5)
 I (../Inc/stm32l0xx_hal_conf.h)(0x574BEFF2)
 I (../Inc/mxconstants.h)(0x574BEFF3)
@@ -611,7 +611,7 @@ I (../Inc/flir_lcd.h)(0x57444253)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x569DEA3A)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x569DEA3A)
 I (../Inc/sys.h)(0x573BDA7D)
-I (../Inc/flir_display.h)(0x574BE779)
+I (../Inc/flir_display.h)(0x574BF692)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x569DEA3A)
 F (../Src/stm32l0xx_it.c)(0x574BEFF2)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\stm32l0xx_it.o --omf_browse cubemxlcd\stm32l0xx_it.crf --depend cubemxlcd\stm32l0xx_it.d)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x573BC6C5)
@@ -646,7 +646,7 @@ I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim_ex.h)(0x573BC6C5)
 I (../Inc/stm32l0xx_it.h)(0x574BEFF2)
-I (../Inc/flir_display.h)(0x574BE779)
+I (../Inc/flir_display.h)(0x574BF692)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x569DEA3A)
 F (..\Src\flir_lcd.c)(0x5746E004)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\flir_lcd.o --omf_browse cubemxlcd\flir_lcd.crf --depend cubemxlcd\flir_lcd.d)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x573BC6C5)
@@ -685,7 +685,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x569DEA3A)
 I (../Inc/flir_lcd.h)(0x57444253)
 I (../Inc/sys.h)(0x573BDA7D)
 I (../Inc/font.h)(0x5475C7A1)
-F (..\Src\flir_display.c)(0x574BEC27)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\flir_display.o --omf_browse cubemxlcd\flir_display.crf --depend cubemxlcd\flir_display.d)
+F (..\Src\flir_display.c)(0x574BFE76)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\flir_display.o --omf_browse cubemxlcd\flir_display.crf --depend cubemxlcd\flir_display.d)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x573BC6C5)
 I (../Inc/stm32l0xx_hal_conf.h)(0x574BEFF2)
 I (../Inc/mxconstants.h)(0x574BEFF3)
@@ -721,7 +721,7 @@ I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x569DEA3A)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x569DEA3A)
 I (../Inc/flir_lcd.h)(0x57444253)
 I (../Inc/sys.h)(0x573BDA7D)
-I (../Inc/flir_display.h)(0x574BE779)
+I (../Inc/flir_display.h)(0x574BF692)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x569DEA3A)
 I (../Inc/crc16.h)(0x5746E72A)
 F (..\Src\crc16.c)(0x5746E736)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\crc16.o --omf_browse cubemxlcd\crc16.crf --depend cubemxlcd\crc16.d)

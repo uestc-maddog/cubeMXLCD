@@ -134,8 +134,6 @@ void initFlir_Display( void )
 
 	// start flir camera through a start up sequence
 	flir_startSeq();
-	
-	flir_reSyc();
 }
 
 /*********************************************************************
@@ -184,25 +182,22 @@ bool flir_display_recDataCheck( void )
 	
 	// obtain the ID
 	idTemp = flir_rxBuf[0];
-	
-	/*
+
 	// set the four most-significant bits of ID and crc part as zero, prepare to send
-	flir_rxBuf[0] &= 0x0F;
-	flir_rxBuf[2] = 0;
-	flir_rxBuf[3] = 0;
+	flir_rxBuf[0] &= 0x0fff;
+	flir_rxBuf[1] = 0;
 	
 	// decide whether a re-synchronize is needed
 	if(crcTemp != CalcCRC16Bytes(LCD_FLIR_RX_BUF_SIZ, (char*)flir_rxBuf))
 	{
 		// start re-synchronize
-		if (rawTemp != 0)
+		if (rawPos_buf != 0)
 			flir_reSyc();
 		else
 			flir_display_startRec();
 		// return fail
 		return false;
 	}
-	*/
 	
 	// data valid, copy valid data to a processing buffer
 	memcpy(flir_rx_tempBuf, flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
@@ -212,13 +207,8 @@ bool flir_display_recDataCheck( void )
 
 	
 	// now the data is valid, check whether need to display the frame
-	if((idTemp & 0x0F00) != 0x0f00)
+	if((idTemp & 0x0f00) != 0x0f00)
 	{		
-		buf[temp] = idTemp;
-		temp++;
-		if(temp == 990)
-			while(1);	
-	
 		// check whether previous transmit finish, poll here
 		i = 1000;
 		while(!flir_TXCpl)
@@ -236,7 +226,7 @@ bool flir_display_recDataCheck( void )
 		}
 		
 		// frame data available, prepare to send frame
-		for(i = 0; i < (LCD_FLIR_RX_BUF_SIZ - 4); i++)
+		for(i = 0; i < (LCD_FLIR_RX_BUF_SIZ - 2); i++)
 		{
 			// copy data from the first data value to the last
 			flir_txBuf[2 * i - 1] = flir_rx_tempBuf[i + 4];
@@ -252,13 +242,14 @@ bool flir_display_recDataCheck( void )
 		{
 			// its a frame data
 			// whether the raw is continous?
-			if(rawTemp != (rawPos_buf + LCD_YPOS_OFFSET + 1))
+			if(rawTemp != rawPos_buf)
 			{
-				// set coursor first
-				flir_startDisplay((rawTemp + LCD_YPOS_OFFSET), 0);
+				// course doesn't match, re-established connection
+				flir_reSyc();
+				return false;
 			}
 			// save current raw information
-			rawPos_buf = rawTemp;
+			rawPos_buf ++;
 					
 			// clear TX finish flag
 			flir_TXCpl = false;
@@ -268,6 +259,11 @@ bool flir_display_recDataCheck( void )
 			
 			// return success
 			flir_display_startRec();
+			
+		buf[temp] = idTemp;
+		temp++;
+		if(temp == 80)
+			while(1);			
 			return true;
 		}	
 		else
@@ -282,7 +278,8 @@ bool flir_display_recDataCheck( void )
 	else
 	{
 		// frame not ready. wait and request again
-		flir_reSyc();
+		//HAL_Delay(1);
+		HAL_SPI_Receive_DMA(&hspi2, (uint8_t *)flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
 		
 		return false;
 	}

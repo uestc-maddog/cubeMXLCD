@@ -88,6 +88,7 @@ int main(void)
   HAL_Init();
 
   /* Configure the system clock */
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
   SystemClock_Config();
 
   /* Initialize all configured peripherals */
@@ -107,6 +108,7 @@ int main(void)
 	// Init LCD and also control parameters
 	initFlir_Display();	 
 
+flir_display_startRec();
   /* USER CODE END 2 */
 
   /* Infinite loop */
