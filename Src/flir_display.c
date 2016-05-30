@@ -352,7 +352,7 @@ bool flir_startSeq( void )
 	FLIR_RESETLOW_SET;
 	
 	// assert CE, the flir cammera is now re-synchronized
-	FLIR_CS_RESET;
+	// FLIR_CS_RESET;
 	
 	// delay for 1s
 	HAL_Delay(1000);

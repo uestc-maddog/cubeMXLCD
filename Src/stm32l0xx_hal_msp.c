@@ -114,16 +114,18 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
   
     /**SPI2 GPIO Configuration    
     PB10     ------> SPI2_SCK
-    PB14     ------> SPI2_MISO 
+    PB12     ------> SPI2_NSS
+    PB14     ------> SPI2_MISO
+    PB15     ------> SPI2_MOSI 
     */
     GPIO_InitStruct.Pin = GPIO_PIN_10;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    GPIO_InitStruct.Pin = GPIO_PIN_14;
+    GPIO_InitStruct.Pin = GPIO_PIN_12|GPIO_PIN_14|GPIO_PIN_15;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -137,8 +139,8 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
     hdma_spi2_rx.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_spi2_rx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_spi2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_spi2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_spi2_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_spi2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
     hdma_spi2_rx.Init.Mode = DMA_NORMAL;
     hdma_spi2_rx.Init.Priority = DMA_PRIORITY_LOW;
     HAL_DMA_Init(&hdma_spi2_rx);
@@ -185,9 +187,11 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* hspi)
   
     /**SPI2 GPIO Configuration    
     PB10     ------> SPI2_SCK
-    PB14     ------> SPI2_MISO 
+    PB12     ------> SPI2_NSS
+    PB14     ------> SPI2_MISO
+    PB15     ------> SPI2_MOSI 
     */
-    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10|GPIO_PIN_14);
+    HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10|GPIO_PIN_12|GPIO_PIN_14|GPIO_PIN_15);
 
     /* Peripheral DMA DeInit*/
     HAL_DMA_DeInit(hspi->hdmarx);
