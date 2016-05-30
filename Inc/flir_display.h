@@ -33,9 +33,17 @@
 
 #define LCD_YPOS_OFFSET	4
 
-//FLIR_CS  
+// FLIR_CS  
 #define FLIR_CS_SET 	 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET)//PB12 
 #define FLIR_CS_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET)//PB12
+
+// FLIR_PW_LOW
+#define FLIR_PWLOW_SET	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET)// PA8
+#define FLIR_PWLOW_RESET	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET)
+
+// FLIR_RESET
+#define FLIR_RESETLOW_SET	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET)// PB15
+#define FLIR_RESETLOW_RESET	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET)
 
 /********************************************************************************************************
  *                                               CONSTANTS

@@ -107,9 +107,6 @@ void initFlir_Display( void )
 	flir_TXCpl = true;
 	flir_RXCpl = false;
 	
-	// start flir camera through a start up sequence
-	flir_startSeq();
-	
 	// init LCD
 	LCD_Init();
 	
@@ -135,8 +132,8 @@ void initFlir_Display( void )
 	// end this transmission
 	flir_endDisplay();
 
-	// delay 250 ms here to make flir stable
-	HAL_Delay(250);
+	// start flir camera through a start up sequence
+	flir_startSeq();
 	
 	flir_reSyc();
 }
@@ -188,6 +185,7 @@ bool flir_display_recDataCheck( void )
 	// obtain the ID
 	idTemp = (flir_rxBuf[0] << 8) + flir_rxBuf[1];
 	
+	/*
 	// set the four most-significant bits of ID and crc part as zero, prepare to send
 	flir_rxBuf[0] &= 0x0F;
 	flir_rxBuf[2] = 0;
@@ -197,28 +195,29 @@ bool flir_display_recDataCheck( void )
 	if(crcTemp != CalcCRC16Bytes(LCD_FLIR_RX_BUF_SIZ, (char*)flir_rxBuf))
 	{
 		// start re-synchronize
-		flir_reSyc();
-		
+		if (rawTemp != 0)
+			flir_reSyc();
+		else
+			flir_display_startRec();
 		// return fail
 		return false;
 	}
-
+	*/
+	
 	// data valid, copy valid data to a processing buffer
 	memcpy(flir_rx_tempBuf, flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
 	// clear receiving buf
 	memset(flir_rxBuf, 0, LCD_FLIR_RX_BUF_SIZ);
 	// now, receiving DMA is okay to perform another receiving
-	flir_display_startRec();
-	
+
 	
 	// now the data is valid, check whether need to display the frame
 	if((idTemp & 0x0F00) != 0x0f00)
 	{		
-		
-	buf[temp] = idTemp;
-	temp++;
-	if(temp == 1999)
-		while(1);	
+		buf[temp] = idTemp;
+		temp++;
+		if(temp == 20)
+			while(1);	
 	
 		// check whether previous transmit finish, poll here
 		i = 1000;
@@ -329,7 +328,22 @@ bool flir_reSyc( void )
  */
 bool flir_startSeq( void )
 {
-	// not sure whether needed
+	// assert PWR_DWN_L
+	FLIR_PWLOW_RESET;
+	// assert RESET
+	FLIR_RESETLOW_RESET;
+	
+	// delay 5000 clk cycle. 25MHz, 5000 cycle, 0.2ms. Delay 1ms here
+	HAL_Delay(190);
+	
+	// de- assert PWR_DWN_L
+	FLIR_PWLOW_SET;
+	
+	HAL_Delay(190);	
+	
+	// De-assert RESET
+	FLIR_RESETLOW_SET;
+	
 	// assert CE, the flir cammera is now re-synchronized
 	FLIR_CS_RESET;
 	
