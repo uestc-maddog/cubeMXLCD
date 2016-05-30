@@ -229,7 +229,10 @@ bool flir_display_recDataCheck( void )
 			
 			// if not able to finish TX withn 1s, abort.
 			if(!i)
+			{
+				flir_reSyc();
 				return false;
+			}
 		}
 		
 		// frame data available, prepare to send frame
@@ -264,6 +267,7 @@ bool flir_display_recDataCheck( void )
 			HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
 			
 			// return success
+			flir_display_startRec();
 			return true;
 		}	
 		else
@@ -271,12 +275,15 @@ bool flir_display_recDataCheck( void )
 			// its a telemetry line, what to do now?
 			
 			// return success
+			flir_display_startRec();
 			return true;
 		}
 	}
 	else
 	{
 		// frame not ready. wait and request again
+		flir_reSyc();
+		
 		return false;
 	}
 }
@@ -346,6 +353,9 @@ bool flir_startSeq( void )
 	
 	// assert CE, the flir cammera is now re-synchronized
 	FLIR_CS_RESET;
+	
+	// delay for 1s
+	HAL_Delay(1000);
 	
 	return true;
 }
