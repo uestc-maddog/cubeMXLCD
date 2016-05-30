@@ -26,8 +26,8 @@
  *                                                 MACROS
  ********************************************************************************************************/
 // flir camera data buffer size
-#define LCD_FLIR_SPI_BUF_SIZ	640
-#define LCD_FLIR_RX_BUF_SIZ		164
+#define LCD_FLIR_SPI_BUF_SIZ	320
+#define LCD_FLIR_RX_BUF_SIZ		82
 
 #define FLIR_TELE_LINE	60
 

@@ -69,9 +69,9 @@ extern DMA_HandleTypeDef hdma_spi2_rx;
 // flir camera one row graphic data
  
 // transmit buffer
-static uint8_t flir_rxBuf[LCD_FLIR_RX_BUF_SIZ];		// RX buffer, size LCD_FLIR_RX_BUF_SIZ. One raw data
-static uint8_t flir_rx_tempBuf[LCD_FLIR_RX_BUF_SIZ]; // cache, save RX buffer value when valid to save time
-static uint8_t flir_txBuf[LCD_FLIR_SPI_BUF_SIZ]; // TX buffer, size LCD_FLIR_SPI_BUF_SIZ. two raw data
+static uint16_t flir_rxBuf[LCD_FLIR_RX_BUF_SIZ];		// RX buffer, size LCD_FLIR_RX_BUF_SIZ. One raw data
+static uint16_t flir_rx_tempBuf[LCD_FLIR_RX_BUF_SIZ]; // cache, save RX buffer value when valid to save time
+static uint16_t flir_txBuf[LCD_FLIR_SPI_BUF_SIZ]; // TX buffer, size LCD_FLIR_SPI_BUF_SIZ. two raw data
 
 /********************************************************************************************************
  *                                               LOCAL FUNCTIONS
@@ -117,18 +117,18 @@ void initFlir_Display( void )
 	// start from (0,0), set the top 4 raw pixels as black
 	flir_startDisplay(0, 0);
 	// first 2 raw
-	flir_display_DMAPoll(flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
+	flir_display_DMAPoll((uint8_t *)flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
 	// continue for the second 2 raw
-	flir_display_DMAPoll(flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
+	flir_display_DMAPoll((uint8_t *)flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
 	// end this transmission
 	flir_endDisplay();
 	
 	// set cursor again to print the last 4 raw pixels as black
 	flir_startDisplay(0, 124);
 	// first 2 raw
-	flir_display_DMAPoll(flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
+	flir_display_DMAPoll((uint8_t *)flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
 	// continue for the second 2 raw
-	flir_display_DMAPoll(flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
+	flir_display_DMAPoll((uint8_t *)flir_txBuf, LCD_FLIR_SPI_BUF_SIZ);
 	// end this transmission
 	flir_endDisplay();
 
@@ -152,7 +152,7 @@ void initFlir_Display( void )
 bool flir_display_startRec( void )
 {
 	// start receiving frams
-	HAL_SPI_Receive_DMA(&hspi2, flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
+	HAL_SPI_Receive_DMA(&hspi2, (uint8_t *)flir_rxBuf, LCD_FLIR_RX_BUF_SIZ);
 	return true;
 }
 
@@ -180,10 +180,10 @@ bool flir_display_recDataCheck( void )
 	flir_RXCpl = false;
 	
 	// obtain crc value
-	crcTemp = (flir_rxBuf[2] << 8) + flir_rxBuf[3];
+	crcTemp = flir_rxBuf[1];
 	
 	// obtain the ID
-	idTemp = (flir_rxBuf[0] << 8) + flir_rxBuf[1];
+	idTemp = flir_rxBuf[0];
 	
 	/*
 	// set the four most-significant bits of ID and crc part as zero, prepare to send
@@ -216,7 +216,7 @@ bool flir_display_recDataCheck( void )
 	{		
 		buf[temp] = idTemp;
 		temp++;
-		if(temp == 20)
+		if(temp == 990)
 			while(1);	
 	
 		// check whether previous transmit finish, poll here
