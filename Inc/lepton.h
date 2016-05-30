@@ -111,6 +111,7 @@ typedef struct __attribute__((packed)) _rgb {
   uint8_t b;
 } rgb_t;
 
+/*
 #ifdef Y16
 typedef struct __attribute__((packed)) _vospi_packet {
   uint16_t header[2];
@@ -127,12 +128,19 @@ typedef struct __attribute__((packed)) _vospi_packet {
     telemetry_data_l2 telemetry_data;
   } data;
 } vospi_packet;
-#endif
-
+#endif*/
+/*
 typedef struct _lepton_buffer {
   vospi_packet lines[IMAGE_NUM_LINES + TELEMETRY_NUM_LINES];
   uint8_t number;
   lepton_status status;
+} lepton_buffer;*/
+
+typedef struct _lepton_buffer {
+	uint16_t header[2];
+	uint8_t number;
+	uint16_t line[FRAME_LINE_LENGTH];
+	lepton_status status;
 } lepton_buffer;
 
 typedef struct __attribute__((packed)) _yuv422 {
@@ -146,7 +154,7 @@ typedef struct __attribute__((packed)) _yuv422_buffer {
   yuv422_row_t data[IMAGE_NUM_LINES];
 } yuv422_buffer_t;
 
-lepton_status complete_lepton_transfer(lepton_buffer *);
+// lepton_status complete_lepton_transfer(lepton_buffer *);
 lepton_buffer* lepton_transfer(void);
 
 void print_image_binary_background(void);

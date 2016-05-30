@@ -16,11 +16,12 @@ uint8_t lepton_i2c_buffer[36];
 uint32_t completed_yuv_frame_count;
 yuv422_buffer_t yuv_buffers[2];
 
+/*
 struct rgb_to_yuv_state {
   struct pt pt;
   lepton_buffer *restrict rgb;
   yuv422_buffer_t *restrict buffer;
-};
+};*/
 
 #ifdef USART_DEBUG
 #define DEBUG_PRINTF(...) printf( __VA_ARGS__);
@@ -28,13 +29,13 @@ struct rgb_to_yuv_state {
 #define DEBUG_PRINTF(...)
 #endif
 
-
+/*
 uint32_t get_lepton_buffer(lepton_buffer **buffer)
 {
   if (buffer != NULL)
     *buffer = completed_buffer;
 	return completed_frame_count;
-}
+}*/
 
 uint32_t get_lepton_buffer_yuv(yuv422_buffer_t **buffer)
 {
@@ -86,7 +87,7 @@ PT_THREAD( lepton_task(struct pt *pt))
 
 		PT_YIELD_UNTIL(pt, current_buffer->status != LEPTON_STATUS_TRANSFERRING);
 
-		if (complete_lepton_transfer(current_buffer) != LEPTON_STATUS_OK)
+		if ( (current_buffer->status) != LEPTON_STATUS_OK)
 		{
 			if (current_buffer->status == LEPTON_STATUS_RESYNC)
 			{
@@ -139,18 +140,20 @@ PT_THREAD( lepton_task(struct pt *pt))
 
 			//HAL_GPIO_TogglePin(SYSTEM_LED_GPIO_Port, SYSTEM_LED_Pin);
 
+			/*
 #ifndef Y16
 			PT_SPAWN(
 				pt,
 				&rgb_to_yuv_pt,
 				rgb_to_yuv(&rgb_to_yuv_pt, completed_buffer, &yuv_buffers[(completed_yuv_frame_count + 1) % 2])
 			);
-#endif
+#endif*/
 		}
 	}
 	PT_END(pt);
 }
 
+/*
 static inline uint8_t clamp (float x)
 {
   if (x < 0)         return 0;
@@ -198,3 +201,4 @@ PT_THREAD( rgb_to_yuv(struct pt *pt, lepton_buffer *restrict lepton, yuv422_buff
 
 	PT_END(pt);
 }
+*/

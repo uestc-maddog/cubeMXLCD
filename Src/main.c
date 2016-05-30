@@ -39,7 +39,7 @@
 
 #include <string.h>
 #include "pt.h"
-
+#include "lepton.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -55,6 +55,7 @@ TIM_HandleTypeDef htim6;
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
 static struct pt lepton_task_pt;
+PT_THREAD( lepton_task(struct pt *pt));
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,6 +112,7 @@ int main(void)
 	// Init LCD and also control parameters
 	initFlir_Display();	 
 
+lepton_init();
 	PT_INIT(&lepton_task_pt);
   /* USER CODE END 2 */
 
