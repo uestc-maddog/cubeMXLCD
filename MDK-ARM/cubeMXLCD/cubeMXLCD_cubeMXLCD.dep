@@ -575,7 +575,7 @@ I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim.h)(0x573BC6C5)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim_ex.h)(0x573BC6C5)
-F (../Src/main.c)(0x574BF8D1)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\main.o --omf_browse cubemxlcd\main.crf --depend cubemxlcd\main.d)
+F (../Src/main.c)(0x574C05B4)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\main.o --omf_browse cubemxlcd\main.crf --depend cubemxlcd\main.d)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x573BC6C5)
 I (../Inc/stm32l0xx_hal_conf.h)(0x574BEFF2)
 I (../Inc/mxconstants.h)(0x574BEFF3)
@@ -613,6 +613,9 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x569DEA3A)
 I (../Inc/sys.h)(0x573BDA7D)
 I (../Inc/flir_display.h)(0x574BF692)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x569DEA3A)
+I (../Inc/pt.h)(0x4520C558)
+I (../Inc/lc.h)(0x421DAE4B)
+I (../Inc/lc-switch.h)(0x448172A7)
 F (../Src/stm32l0xx_it.c)(0x574BEFF2)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\stm32l0xx_it.o --omf_browse cubemxlcd\stm32l0xx_it.crf --depend cubemxlcd\stm32l0xx_it.d)
 I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x573BC6C5)
 I (../Inc/stm32l0xx_hal_conf.h)(0x574BEFF2)
@@ -726,6 +729,42 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x569DEA3A)
 I (../Inc/crc16.h)(0x5746E72A)
 F (..\Src\crc16.c)(0x5746E736)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\crc16.o --omf_browse cubemxlcd\crc16.crf --depend cubemxlcd\crc16.d)
 I (../Inc/crc16.h)(0x5746E72A)
+F (..\Src\lepton_task.c)(0x574C0635)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\lepton_task.o --omf_browse cubemxlcd\lepton_task.crf --depend cubemxlcd\lepton_task.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x569DEA3A)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h)(0x573BC6C5)
+I (../Inc/stm32l0xx_hal_conf.h)(0x574BEFF2)
+I (../Inc/mxconstants.h)(0x574BEFF3)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_rcc.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_def.h)(0x573BC6C5)
+I (../Drivers/CMSIS/Device/ST/STM32L0xx/Include/stm32l0xx.h)(0x573BC6C3)
+I (../Drivers/CMSIS/Device/ST/STM32L0xx/Include/stm32l051xx.h)(0x573BC6C3)
+I (../Drivers/CMSIS/Include/core_cm0plus.h)(0x573BC6C4)
+I (../Drivers/CMSIS/Include/core_cmInstr.h)(0x573BC6C4)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x573BC6C4)
+I (../Drivers/CMSIS/Include/core_cmFunc.h)(0x573BC6C4)
+I (../Drivers/CMSIS/Device/ST/STM32L0xx/Include/system_stm32l0xx.h)(0x573BC6C3)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x573BC6C5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x569DEA3A)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_rcc_ex.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_gpio.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_gpio_ex.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_dma.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_cortex.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_flash.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_flash_ex.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_flash_ramfunc.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_i2c.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_i2c_ex.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_iwdg.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_pwr_ex.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_spi.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim.h)(0x573BC6C5)
+I (../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal_tim_ex.h)(0x573BC6C5)
+I (../Inc/pt.h)(0x4520C558)
+I (../Inc/lc.h)(0x421DAE4B)
+I (../Inc/lc-switch.h)(0x448172A7)
+I (../Inc/lepton.h)(0x574C0671)
 F (startup_stm32l051xx.s)(0x574BEFF4)(--cpu Cortex-M0+ -g --apcs=interwork --pd "__MICROLIB SETA 1"-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include--pd "__UVISION_VERSION SETA 518" --pd "_RTE_ SETA 1" --pd "STM32L051xx SETA 1"--list startup_stm32l051xx.lst --xref -o cubemxlcd\startup_stm32l051xx.o --depend cubemxlcd\startup_stm32l051xx.d)
 F (../Drivers/CMSIS/Device/ST/STM32L0xx/Source/Templates/system_stm32l0xx.c)(0x573BC6C3)(-c --cpu Cortex-M0+ -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc -I ../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Include -I ../Drivers/CMSIS/Device/ST/STM32L0xx/Include --C99-I "D:\Flir Camera\CubeMX\cubeMXLCD\MDK-ARM\RTE"-I C:\Keil_v5\ARM\PACK\ARM\CMSIS\4.5.0\CMSIS\Include-I C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.5.0\Device\Include-D__UVISION_VERSION="518" -D_RTE_ -DSTM32L051xx -DUSE_HAL_DRIVER -DSTM32L051xx-o cubemxlcd\system_stm32l0xx.o --omf_browse cubemxlcd\system_stm32l0xx.crf --depend cubemxlcd\system_stm32l0xx.d)
 I (../Drivers/CMSIS/Device/ST/STM32L0xx/Include/stm32l0xx.h)(0x573BC6C3)

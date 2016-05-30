@@ -38,6 +38,7 @@
 #include "flir_display.h"
 
 #include <string.h>
+#include "pt.h"
 
 /* USER CODE END Includes */
 
@@ -53,7 +54,7 @@ TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+static struct pt lepton_task_pt;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -73,6 +74,8 @@ static void MX_TIM6_Init(void);
 /* USER CODE BEGIN 0 */
 uint8_t test,test1,test2;
 uint16_t testbuf[LCD_FLIR_RX_BUF_SIZ];
+
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -108,7 +111,7 @@ int main(void)
 	// Init LCD and also control parameters
 	initFlir_Display();	 
 
-flir_display_startRec();
+	PT_INIT(&lepton_task_pt);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -120,10 +123,7 @@ flir_display_startRec();
   /* USER CODE BEGIN 3 */
 
 	// if receiving finish, check and responce
-		if(flir_RXCpl)
-		{
-			flir_display_recDataCheck();
-		}
+		PT_SCHEDULE(lepton_task(&lepton_task_pt));
 
   }
   /* USER CODE END 3 */
