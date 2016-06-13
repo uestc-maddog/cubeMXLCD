@@ -25,7 +25,7 @@
 
 /* Special requirement */
 #include "flir_lcd.h"
-#include "font.h"  
+//#include "font.h"  
 
 /********************************************************************************************************
  *                                                 MACROS
@@ -42,7 +42,7 @@
  ********************************************************************************************************/
 // Basic LCD information 
 _lcd_dev lcddev; 
-bool lcdTXcpl = true; // initialize transmit complete as true
+volatile bool lcdTXcpl = true; // initialize transmit complete as true
 
 /********************************************************************************************************
  *                                               EXTERNAL VARIABLES
@@ -65,6 +65,11 @@ static uint16_t BACK_COLOR=0xFFFF;
 
 // buffer used to clear screen
 static uint8_t screenClear[LCD_CLEAR_BUF_SIZ];
+
+#ifdef FLIR_PROJ
+// row data buffer, save for display
+static uint16_t rowBuf[FLIR_PIXPOINT];
+#endif
 
 /********************************************************************************************************
  *                                               LOCAL FUNCTIONS
@@ -246,7 +251,7 @@ void LCD_Init(void)
 	LCD_WR_REG(0x29); //Display on
 
 	// reset to white screen
-	LCD_Clear(WHITE); 
+	LCD_Clear(BLACK); 
 }  
 
 
@@ -285,32 +290,44 @@ void LCD_Clear(uint16_t color)
 	SPILCD_CS_SET;  
 }  
 
+#ifdef FLIR_PROJ
 /*********************************************************************
  * @fn      LCD_WR_Frame
  *
  * @brief   Display a whole frame data
  *
  * @param   uint16_t * pdata - data pointer
- *					uint16_t dLen - data length
  *
  * @return  transmit status
  */
-bool LCD_WR_Frame(uint16_t * pdata, uint16_t dLen)
+bool LCD_WR_Frame(uint16_t * pdata)
 {
+	uint16_t i;
+	
 	if (lcdTXcpl)
 	{
+		for(i = 0; i < FLIR_LINE; i++)
+		{
+			// get the buffer data correct
+			memcpy((uint8_t *)rowBuf, (uint8_t *)(pdata + i * FLIR_PACKLINELEN_16BIT + 2), FLIR_COLUMNUM);
+		}
+	
 		// if previous transmit finish, transmit new frame
 		// set the start cursor first
 	  LCD_startDisplay(0, 4); // start from the 4th row, skip the black frame
 		
+		// set complete flag invalid
+		lcdTXcpl = false;
+		
 		// use DMA to display a new frame
-		HAL_SPI_Transmit_DMA(&LCD_SPI_PORT, (uint8_t*)pdata, dLen);
+		HAL_SPI_Transmit_DMA(&LCD_SPI_PORT, (uint8_t*)rowBuf, (FLIR_PIXPOINT * 2));
 		
 		// return true
 		return true;
 	}
 	return false;
 }
+#endif
 
 /********************************************************************************************************
  *                                               LOCAL FUNCTIONS
