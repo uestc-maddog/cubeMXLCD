@@ -44,8 +44,6 @@
  ********************************************************************************************************/
 // define the hardware used to connect LCD
 #define LCD_SPI_PORT		hspi1
-#define LCD_DMA_PORT		hdma_spi1_tx
-
 /* LCD basic information */
 #define LCD_RAW					128
 #define LCD_COLUMN			160
@@ -104,23 +102,6 @@ typedef struct
 }_lcd_dev; 
 
 
-#ifdef FLIR_PROJ
-/* Flir Related */
-#define FLIR_PIXPOINT		4800	// 80*60 point
-
-#define FLIR_PACKLINELEN	164 // 164 bytes length
-
-#define FLIR_PACKLINELEN_16BIT		82	// 164 bytes per package, 82 16bits 
-
-#define FLIR_COLUMNUM		80	// 80 unit per line
-
-#define FLIR_LINE				60	// 60 lines
-
-#define FLIR_TEL				3	// flir tel line
-
-#define FLIR_TELLINE		st(60 + FLIR_TEL)	// image line with tel line
-#endif
-
 /********************************************************************************************************
  *                                               CONSTANTS
  ********************************************************************************************************/
@@ -132,8 +113,7 @@ typedef struct
  ********************************************************************************************************/
 // LCD configuration variable
 extern _lcd_dev lcddev;	
-extern volatile bool lcdTXcpl;
-
+ 
 /********************************************************************************************************
  *                                               EXTERNAL FUNCTIONS
  ********************************************************************************************************/
@@ -204,19 +184,18 @@ extern void LCD_Clear(uint16_t);
  */
 extern void LCD_WriteRAM_Prepare(void);
 
-#ifdef FLIR_PROJ
 /*********************************************************************
  * @fn      LCD_WR_Frame
  *
  * @brief   Display a whole frame data
  *
  * @param   uint16_t * pdata - data pointer
+ *					uint16_t dLen - data length
  *
  * @return  transmit status
  */
-bool LCD_WR_Frame(uint16_t * );
-#endif
-
+extern bool LCD_WR_Frame(uint16_t *, uint16_t);
+	
 #endif
 /*********************************************************************
  */
