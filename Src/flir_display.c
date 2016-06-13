@@ -338,12 +338,12 @@ bool flir_startSeq( void )
 	FLIR_RESETLOW_RESET;
 	
 	// delay 5000 clk cycle. 25MHz, 5000 cycle, 0.2ms. Delay 1ms here
-	HAL_Delay(190);
+	HAL_Delay(400);
 	
 	// de- assert PWR_DWN_L
 	FLIR_PWLOW_SET;
 	
-	HAL_Delay(190);	
+	HAL_Delay(400);	
 	
 	// De-assert RESET
 	FLIR_RESETLOW_SET;

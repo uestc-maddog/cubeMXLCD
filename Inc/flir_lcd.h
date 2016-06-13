@@ -37,9 +37,13 @@
 
 #include "sys.h"
 
+#include <stdbool.h>
+
 /********************************************************************************************************
  *                                                 MACROS
  ********************************************************************************************************/
+// define the hardware used to connect LCD
+#define LCD_SPI_PORT		hspi1
 /* LCD basic information */
 #define LCD_RAW					128
 #define LCD_COLUMN			160
@@ -178,8 +182,20 @@ extern void LCD_Clear(uint16_t);
  *
  * @return  none
  */
-void LCD_WriteRAM_Prepare(void);
+extern void LCD_WriteRAM_Prepare(void);
 
+/*********************************************************************
+ * @fn      LCD_WR_Frame
+ *
+ * @brief   Display a whole frame data
+ *
+ * @param   uint16_t * pdata - data pointer
+ *					uint16_t dLen - data length
+ *
+ * @return  transmit status
+ */
+extern bool LCD_WR_Frame(uint16_t *, uint16_t);
+	
 #endif
 /*********************************************************************
  */

@@ -106,9 +106,13 @@ int main(void)
 	
 	// Init LCD
 	// Init LCD and also control parameters
-	initFlir_Display();	 
+	// initFlir_Display();	 
+	
+	// init LCD
+	LCD_Init();
 
-flir_display_startRec();
+
+	// flir_display_startRec();
   /* USER CODE END 2 */
 
   /* Infinite loop */

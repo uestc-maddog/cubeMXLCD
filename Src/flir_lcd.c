@@ -42,12 +42,13 @@
  ********************************************************************************************************/
 // Basic LCD information 
 _lcd_dev lcddev; 
+bool lcdTXcpl = true; // initialize transmit complete as true
 
 /********************************************************************************************************
  *                                               EXTERNAL VARIABLES
  ********************************************************************************************************/
 // SPI1 handler variable, delare in main.c
-extern SPI_HandleTypeDef hspi1;
+extern SPI_HandleTypeDef LCD_SPI_PORT;
  
 /********************************************************************************************************
  *                                               EXTERNAL FUNCTIONS
@@ -68,12 +69,12 @@ static uint8_t screenClear[LCD_CLEAR_BUF_SIZ];
 /********************************************************************************************************
  *                                               LOCAL FUNCTIONS
  ********************************************************************************************************/
-
-void LCD_WR_REG(uint16_t);
-void LCD_WR_DATA(uint16_t);
-void LCD_WR_DATA8(uint8_t );
-void LCD_WR_REG_DATA(uint8_t , uint16_t );
+static void LCD_WR_REG(uint16_t);
+static void LCD_WR_DATA(uint16_t);
+static void LCD_WR_DATA8(uint8_t );
+static void LCD_WR_REG_DATA(uint8_t , uint16_t );
 void LCD_WriteRAM_Prepare(void);
+static void LCD_startDisplay( uint16_t Xpos, uint16_t Ypos );
 
 /********************************************************************************************************
  *                                               PUBLIC FUNCTIONS
@@ -277,12 +278,39 @@ void LCD_Clear(uint16_t color)
 	// block sending
 	for(index = 0; index < LCD_CLEAR_ROUND; index ++)
 	{
-		HAL_SPI_Transmit(&hspi1, (uint8_t*)screenClear, LCD_CLEAR_BUF_SIZ, 100);	
+		HAL_SPI_Transmit(&LCD_SPI_PORT, (uint8_t*)screenClear, LCD_CLEAR_BUF_SIZ, 100);	
 	}
 	
 	// LCD_CS=1		
 	SPILCD_CS_SET;  
 }  
+
+/*********************************************************************
+ * @fn      LCD_WR_Frame
+ *
+ * @brief   Display a whole frame data
+ *
+ * @param   uint16_t * pdata - data pointer
+ *					uint16_t dLen - data length
+ *
+ * @return  transmit status
+ */
+bool LCD_WR_Frame(uint16_t * pdata, uint16_t dLen)
+{
+	if (lcdTXcpl)
+	{
+		// if previous transmit finish, transmit new frame
+		// set the start cursor first
+	  LCD_startDisplay(0, 4); // start from the 4th row, skip the black frame
+		
+		// use DMA to display a new frame
+		HAL_SPI_Transmit_DMA(&LCD_SPI_PORT, (uint8_t*)pdata, dLen);
+		
+		// return true
+		return true;
+	}
+	return false;
+}
 
 /********************************************************************************************************
  *                                               LOCAL FUNCTIONS
@@ -297,7 +325,7 @@ void LCD_Clear(uint16_t color)
  *
  * @return  none
  */
-void LCD_WR_REG(uint16_t regval)
+static void LCD_WR_REG(uint16_t regval)
 { 
 	uint8_t temp;
 
@@ -308,7 +336,7 @@ void LCD_WR_REG(uint16_t regval)
 
 	// send information
 	temp = regval&0x00FF;
-	HAL_SPI_Transmit(&hspi1, &temp, 1 , 20);
+	HAL_SPI_Transmit(&LCD_SPI_PORT, &temp, 1 , 20);
 
 	//LCD_CS=1
 	SPILCD_CS_SET;  	   		 
@@ -324,7 +352,7 @@ void LCD_WR_REG(uint16_t regval)
  *
  * @return  none
  */
-void LCD_WR_DATA(uint16_t data)
+static void LCD_WR_DATA(uint16_t data)
 {
 	//LCD_CS=0
  	SPILCD_CS_RESET;
@@ -332,7 +360,7 @@ void LCD_WR_DATA(uint16_t data)
 	SPILCD_RS_SET;	
 	
 	// send data
-	HAL_SPI_Transmit(&hspi1, (uint8_t*)&data, 2, 20);
+	HAL_SPI_Transmit(&LCD_SPI_PORT, (uint8_t*)&data, 2, 20);
 	
 	//LCD_CS=1
 	SPILCD_CS_SET; 		
@@ -347,7 +375,7 @@ void LCD_WR_DATA(uint16_t data)
  *
  * @return  none
  */
-void LCD_WR_DATA8(uint8_t da)   
+static void LCD_WR_DATA8(uint8_t da)   
 {
 	//LCD_CS=0
  	SPILCD_CS_RESET;
@@ -355,7 +383,7 @@ void LCD_WR_DATA8(uint8_t da)
 	SPILCD_RS_SET;	
 
 	// send data
-	HAL_SPI_Transmit(&hspi1, &da, 1 , 20);
+	HAL_SPI_Transmit(&LCD_SPI_PORT, &da, 1 , 20);
 	
 	//LCD_CS=1  	
 	SPILCD_CS_SET;   			 
@@ -371,7 +399,7 @@ void LCD_WR_DATA8(uint8_t da)
  *
  * @return  none
  */
-void LCD_WR_REG_DATA(uint8_t LCD_Reg, uint16_t LCD_RegValue)
+static void LCD_WR_REG_DATA(uint8_t LCD_Reg, uint16_t LCD_RegValue)
 {
 	LCD_WR_REG(LCD_Reg);
 	LCD_WR_DATA(LCD_RegValue);
@@ -392,6 +420,30 @@ void LCD_WriteRAM_Prepare(void)
 	LCD_WR_REG(lcddev.wramcmd);  
 }	
 
+/*********************************************************************
+ * @fn      LCD_startDisplay
+ *
+ * @brief   set parameters to start a display transmit. The function 
+ *					should followed by flir_display function to transmit data
+ *					At last flir_endDisplay should be call to end an transmision.
+ *
+ * @param   uint16_t Xpos -> X start position for this tranmission
+ *					uint16_t Ypos -> Y start position for this tranmission
+ *
+ * @return  none
+ */
+static void LCD_startDisplay( uint16_t Xpos, uint16_t Ypos )
+{
+	// set cousor
+	LCD_SetCursor(Xpos, Ypos);
+	
+	// prepare to write
+	LCD_WriteRAM_Prepare();    
+	
+	// set ready for graphic transmit
+	SPILCD_CS_RESET;  
+	SPILCD_RS_SET;	
+}
 
 
 /*********************************************************************
