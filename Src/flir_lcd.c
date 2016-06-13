@@ -246,7 +246,7 @@ void LCD_Init(void)
 	LCD_WR_REG(0x29); //Display on
 
 	// reset to white screen
-	LCD_Clear(BLACK); 
+	LCD_Clear(WHITE); 
 }  
 
 
@@ -278,7 +278,7 @@ void LCD_Clear(uint16_t color)
 	// block sending
 	for(index = 0; index < LCD_CLEAR_ROUND; index ++)
 	{
-		HAL_SPI_Transmit(&hspi1, (uint8_t*)screenClear, LCD_CLEAR_BUF_SIZ, 100);	
+		HAL_SPI_Transmit(&LCD_SPI_PORT, (uint8_t*)screenClear, LCD_CLEAR_BUF_SIZ, 100);	
 	}
 	
 	// LCD_CS=1		
@@ -304,7 +304,7 @@ bool LCD_WR_Frame(uint16_t * pdata, uint16_t dLen)
 	  LCD_startDisplay(0, 4); // start from the 4th row, skip the black frame
 		
 		// use DMA to display a new frame
-		HAL_SPI_Transmit_DMA(&hspi1, (uint8_t*)pdata, dLen);
+		HAL_SPI_Transmit_DMA(&LCD_SPI_PORT, (uint8_t*)pdata, dLen);
 		
 		// return true
 		return true;
@@ -336,7 +336,7 @@ static void LCD_WR_REG(uint16_t regval)
 
 	// send information
 	temp = regval&0x00FF;
-	HAL_SPI_Transmit(&hspi1, &temp, 1 , 20);
+	HAL_SPI_Transmit(&LCD_SPI_PORT, &temp, 1 , 20);
 
 	//LCD_CS=1
 	SPILCD_CS_SET;  	   		 
@@ -360,7 +360,7 @@ static void LCD_WR_DATA(uint16_t data)
 	SPILCD_RS_SET;	
 	
 	// send data
-	HAL_SPI_Transmit(&hspi1, (uint8_t*)&data, 2, 20);
+	HAL_SPI_Transmit(&LCD_SPI_PORT, (uint8_t*)&data, 2, 20);
 	
 	//LCD_CS=1
 	SPILCD_CS_SET; 		
@@ -383,7 +383,7 @@ static void LCD_WR_DATA8(uint8_t da)
 	SPILCD_RS_SET;	
 
 	// send data
-	HAL_SPI_Transmit(&hspi1, &da, 1 , 20);
+	HAL_SPI_Transmit(&LCD_SPI_PORT, &da, 1 , 20);
 	
 	//LCD_CS=1  	
 	SPILCD_CS_SET;   			 

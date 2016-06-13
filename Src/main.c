@@ -58,7 +58,6 @@ TIM_HandleTypeDef htim6;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void Error_Handler(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_IWDG_Init(void);
@@ -89,6 +88,7 @@ int main(void)
   HAL_Init();
 
   /* Configure the system clock */
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
   SystemClock_Config();
 
   /* Initialize all configured peripherals */
@@ -106,10 +106,10 @@ int main(void)
 	
 	// Init LCD
 	// Init LCD and also control parameters
-	initFlir_Display();	 
+	// initFlir_Display();	 
 	
 	// init LCD
-	// LCD_Init();
+	LCD_Init();
 
 
 	// flir_display_startRec();
@@ -153,10 +153,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLLMUL_8;
   RCC_OscInitStruct.PLL.PLLDIV = RCC_PLLDIV_2;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -164,10 +161,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1);
 
   HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
 
@@ -178,22 +172,19 @@ void SystemClock_Config(void)
 }
 
 /* IWDG init function */
-static void MX_IWDG_Init(void)
+void MX_IWDG_Init(void)
 {
 
   hiwdg.Instance = IWDG;
   hiwdg.Init.Prescaler = IWDG_PRESCALER_4;
   hiwdg.Init.Window = 4095;
   hiwdg.Init.Reload = 4095;
-  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  HAL_IWDG_Init(&hiwdg);
 
 }
 
 /* SPI1 init function */
-static void MX_SPI1_Init(void)
+void MX_SPI1_Init(void)
 {
 
   hspi1.Instance = SPI1;
@@ -208,15 +199,12 @@ static void MX_SPI1_Init(void)
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi1.Init.CRCPolynomial = 7;
-  if (HAL_SPI_Init(&hspi1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  HAL_SPI_Init(&hspi1);
 
 }
 
 /* SPI2 init function */
-static void MX_SPI2_Init(void)
+void MX_SPI2_Init(void)
 {
 
   hspi2.Instance = SPI2;
@@ -231,15 +219,12 @@ static void MX_SPI2_Init(void)
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi2.Init.CRCPolynomial = 7;
-  if (HAL_SPI_Init(&hspi2) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  HAL_SPI_Init(&hspi2);
 
 }
 
 /* TIM6 init function */
-static void MX_TIM6_Init(void)
+void MX_TIM6_Init(void)
 {
 
   TIM_MasterConfigTypeDef sMasterConfig;
@@ -248,24 +233,18 @@ static void MX_TIM6_Init(void)
   htim6.Init.Prescaler = 3200;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim6.Init.Period = 10000;
-  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  HAL_TIM_Base_Init(&htim6);
 
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig);
 
 }
 
 /** 
   * Enable DMA controller clock
   */
-static void MX_DMA_Init(void) 
+void MX_DMA_Init(void) 
 {
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
@@ -287,7 +266,7 @@ static void MX_DMA_Init(void)
         * EVENT_OUT
         * EXTI
 */
-static void MX_GPIO_Init(void)
+void MX_GPIO_Init(void)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct;
@@ -335,21 +314,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler */
-  /* User can add his own implementation to report the HAL error return state */
-  while(1) 
-  {
-  }
-  /* USER CODE END Error_Handler */ 
-}
 
 #ifdef USE_FULL_ASSERT
 

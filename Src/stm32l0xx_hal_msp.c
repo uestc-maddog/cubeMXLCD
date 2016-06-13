@@ -38,7 +38,6 @@ extern DMA_HandleTypeDef hdma_spi1_tx;
 
 extern DMA_HandleTypeDef hdma_spi2_rx;
 
-extern void Error_Handler(void);
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
@@ -55,10 +54,6 @@ void HAL_MspInit(void)
   __HAL_RCC_SYSCFG_CLK_ENABLE();
 
   /* System interrupt init*/
-  /* SVC_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SVC_IRQn, 0, 0);
-  /* PendSV_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(PendSV_IRQn, 0, 0);
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
@@ -100,11 +95,8 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
     hdma_spi1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
     hdma_spi1_tx.Init.Mode = DMA_NORMAL;
-    hdma_spi1_tx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-    if (HAL_DMA_Init(&hdma_spi1_tx) != HAL_OK)
-    {
-      Error_Handler();
-    }
+    hdma_spi1_tx.Init.Priority = DMA_PRIORITY_LOW;
+    HAL_DMA_Init(&hdma_spi1_tx);
 
     __HAL_LINKDMA(hspi,hdmatx,hdma_spi1_tx);
 
@@ -127,7 +119,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     */
     GPIO_InitStruct.Pin = GPIO_PIN_10;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -150,10 +142,7 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* hspi)
     hdma_spi2_rx.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
     hdma_spi2_rx.Init.Mode = DMA_NORMAL;
     hdma_spi2_rx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-    if (HAL_DMA_Init(&hdma_spi2_rx) != HAL_OK)
-    {
-      Error_Handler();
-    }
+    HAL_DMA_Init(&hdma_spi2_rx);
 
     __HAL_LINKDMA(hspi,hdmarx,hdma_spi2_rx);
 
